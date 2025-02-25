@@ -1,0 +1,77 @@
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing</title>
+<!-- 
+    smart_position _may_ import other modules published on npm 
+    end users are expected to bundle their project (using, eg, esbuild, rollup, etc)
+    for our testing, we don't bother bundling
+    we use jspm to create an import map, so that we can use npm modules directly in the browser
+        jspm link index.html -o index.html
+    you'll need to re-run that whenever adding new dependencies to smart_position, before testing
+-->
+<script async src="https://ga.jspm.io/npm:es-module-shims@2.0.10/dist/es-module-shims.js" crossorigin="anonymous"></script>
+<script type="importmap">
+{
+    "imports": {
+    "jquery": "https://ga.jspm.io/npm:jquery@3.7.1/dist/jquery.js"
+    }
+}
+</script>
+<script type="module">
+    import smart_position, {is_alignment, validate_alignments} from './smart_position.js';
+
+    if (!is_alignment('start')) throw new Error('expected "start" to be an alignment')
+    if (is_alignment('starts')) throw new Error('expected "starts" NOT to be an alignment')
+
+    const form = document.querySelector('form');
+    const container = document.getElementById('container');
+    const anchor = document.getElementById('anchor');
+
+    form.addEventListener('change', position);
+
+    function position() {
+
+        smart_position(container, {
+            anchor: anchor, 
+            horizontal_preferences: [form.elements.horizontal.value], 
+            vertical_preferences: [form.elements.vertical.value],
+            margin: parseInt(form.elements.margin.value)||0,
+        });
+    }
+    position();
+
+    window.position = position;
+</script>
+
+<!-- TODO: we should enumerate a set of tests that the user should go through -->
+<form onsubmit="event.preventDefault(); position()">
+    Horizontal: <select name="horizontal">
+        <option value="before">before</option>
+        <option value="start">start</option>
+        <option value="center">center</option>
+        <option value="end">end</option>
+        <option value="after" selected>after</option>
+    </select>
+    <br>
+    Vertical: <select name="vertical">
+        <option value="before">before</option>
+        <option value="start">start</option>
+        <option value="center">center</option>
+        <option value="end">end</option>
+        <option value="after">after</option>
+    </select>
+    <br>
+    <label>
+        Margin: <input type="nuber" step=1, min=0, value="10" name="margin">
+    </label>
+    <br>
+    <input type="submit" value="Position">
+</form>
+
+<div style="contain: layout; margin: 80px">
+    <div id="container" style="position: fixed; border: 1px solid black; padding: 1em; border-radius: 1em; overflow: auto;">
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Perspiciatis suscipit eos labore doloribus in enim obcaecati corporis reiciendis consequatur possimus vitae inventore quas nisi ipsum, reprehenderit, excepturi omnis. Labore, reprehenderit.</p>
+    </div>
+    <div id="anchor" style="position: absolute; left: 200px; top: 200px; width: 100px; height: 100px; background-color: red;"></div>
+</div>

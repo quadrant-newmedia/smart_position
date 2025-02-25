@@ -1,0 +1,18 @@
+{
+  "name": "smart_position",
+  "version": "1.0.0",
+  "description": "Utility function for positioning an element on screen (using `position: fixed`) next another anchor element or coordinates.",
+  "browser": "smart_position.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"http-server -o\" \"tsc -w\" "
+  },
+  "author": "",
+  "license": "ISC",
+  "types": "./smart_position.d.ts",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "http-server": "^14.1.1",
+    "typescript": "^5.7.3"
+  }
+}
